@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Hunter</title>
+</head>
+
+<body>
+    <h1>House Hunter</h1>
+    <form id="searchForm">
+        <label for="suburb">Suburb:</label>
+        <input type="text" id="suburb" name="suburb" required>
+        <label for="rooms">Number of Rooms:</label>
+        <input type="number" id="rooms" name="rooms">
+        <label for="price">Suggested Sale Price:</label>
+        <input type="number" id="price" name="price">
+        <button type="submit">Search</button>
+    </form>
+    <div id="results"></div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const suburb = document.getElementById('suburb').value;
+            const rooms = document.getElementById('rooms').value;
+            const price = document.getElementById('price').value;
+
+            let query = `/houses?suburb=${suburb}`;
+            if (rooms) {
+                query += `&rooms=${rooms}`;
+            }
+            if (price) {
+                query += `&price=${price}`;
+            }
+
+            fetch(query)
+                .then(response => response.json())
+                .then(data => {
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = '';
+                    data.forEach(house => {
+                        const houseDiv = document.createElement('div');
+                        houseDiv.innerHTML = `<h2>${house.title}</h2><p>Rooms: ${house.rooms}</p><p>Suburb: ${house.suburb}</p><p>Price: ${house.price}</p><a href="${house.link}" target="_blank">View Listing</a>`;
+                        resultsDiv.appendChild(houseDiv);
+                    });
+                });
+        });
+    </script>
+</body>
+
+</html>
